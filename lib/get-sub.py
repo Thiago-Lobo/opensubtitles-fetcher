@@ -12,8 +12,6 @@ import struct
 import base64
 import gzip
 
-CREDS_FILE = 'dummy.creds'
-
 def is_list(object):
 	return isinstance(object, (list,))
 
@@ -162,15 +160,16 @@ def load_creds_file(path):
 	return username, password
 
 def main():
-	if len(sys.argv) < 2:
+	if len(sys.argv) < 3:
 		sys.exit('Please provide a file as input!')
 	
-	input_path = sys.argv[1]
+	creds_path = sys.argv[1]
+	input_path = sys.argv[2]
 
 	if not os.path.exists(input_path):
 		sys.exit('Input file does not exist :(')
 
-	api_username, api_password = load_creds_file(os.path.join(os.path.dirname(os.path.realpath(__file__)), CREDS_FILE))
+	api_username, api_password = load_creds_file(os.path.join(os.path.dirname(os.path.realpath(__file__)), creds_path))
 
 	client = OpenSubtitlesClient()
 	client.login(api_username, api_password)
