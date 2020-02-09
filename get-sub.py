@@ -121,12 +121,14 @@ def extract_file_name_from_path(path, with_extension=True):
 
 def download_subtitle(client, path):
 	wrapped_movie_file = File(path)
+	file_name = extract_file_name_from_path(path, with_extension=False)
+	file_name_no_extension = extract_file_name_from_path(path, with_extension=False)
 	
 	found_subtitles = client.search_subtitles({'sublanguageid': 'pob', 'moviehash': wrapped_movie_file.get_hash(), 'moviebytesize': wrapped_movie_file.size})
 	
 	if len(found_subtitles) == 0:
 		print('Found no subtitles by hash')
-		found_subtitles = client.search_subtitles({'sublanguageid': 'pob', 'query': movie_file})
+		found_subtitles = client.search_subtitles({'sublanguageid': 'pob', 'query': file_name})
 
 	# found_subtitles = client.search_subtitles({'imdbid': '8075192'})
 	
@@ -143,9 +145,7 @@ def download_subtitle(client, path):
 		downloaded_subtitle = client.download_subtitles(subtitle_id)[0]
 		decoded = base64_decode_and_ungzip(downloaded_subtitle['data'])
 
-		extracted_name = extract_file_name_from_path(path, with_extension=False)
-
-		with open(os.path.join(os.path.dirname(path), '{0}.srt'.format(extracted_name)), 'wb') as outfile:
+		with open(os.path.join(os.path.dirname(path), '{0}.srt'.format(file_name_no_extension)), 'wb') as outfile:
 			outfile.write(decoded.read())
 		
 		break
